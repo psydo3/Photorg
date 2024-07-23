@@ -1,5 +1,6 @@
 package com.example.photorg
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,8 +18,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -52,6 +56,8 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun TopBar() {
+    val openDialog = remember { mutableStateOf(false) }
+
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -71,11 +77,23 @@ fun TopBar() {
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
-                .clickable {
-                    //implement later
-                }
+                .clickable(
+                    onClick = {openDialog.value = true}
+                )
         )
     }
+
+    if (openDialog.value) {
+        NewAlbumDialog(
+            onDismiss = {
+                openDialog.value = false
+                        },
+            onConfirm = { name, color ->
+                openDialog.value = false
+            }
+        )
+    }
+
 }
 
 @Composable

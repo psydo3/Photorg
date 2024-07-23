@@ -8,5 +8,4 @@ import androidx.navigation.NavController
 @Composable
 fun AlbumScreen(navController: NavController) {
     Text(text = "AAAAA")
-    
 }
