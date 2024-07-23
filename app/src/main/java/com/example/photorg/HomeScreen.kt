@@ -90,6 +90,7 @@ fun TopBar() {
                         },
             onConfirm = { name, color ->
                 openDialog.value = false
+                Log.d("NewAlbumDialog", "Album name: $name, Color: $color")
             }
         )
     }
