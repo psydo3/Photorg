@@ -30,14 +30,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.photorg.ui.theme.Album
+import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     Column {
         TopBar()
         Spacer(modifier = Modifier.height(16.dp))
         AlbumSection(
+            navController = navController,
             albums = listOf(
                 Album("Singapore", colorResource(R.color.dark_green)),
                 Album("Japan", colorResource(R.color.red)),
@@ -79,7 +80,8 @@ fun TopBar() {
 
 @Composable
 fun AlbumSection(
-    albums: List<Album>
+    navController: NavController,
+    albums: List<Album>,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
@@ -89,6 +91,7 @@ fun AlbumSection(
     ){
         items(albums.size){
             AlbumItem(
+                navController = navController,
                 albumName = albums[it].albumName,
                 albumColor = albums[it].albumColor
             )
@@ -98,6 +101,7 @@ fun AlbumSection(
 
 @Composable
 fun AlbumItem(
+    navController: NavController,
     albumName: String = "Unnamed Album",
     albumColor: Color = colorResource(R.color.pink),
 ) {
@@ -115,7 +119,7 @@ fun AlbumItem(
                 .padding(bottom = 16.dp)
                 .padding(top = 10.dp)
                 .clickable {
-
+                    navController.navigate(Routes.albumScreen)
                 }
         )
         Image(

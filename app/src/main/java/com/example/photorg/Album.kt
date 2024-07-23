@@ -1,4 +1,4 @@
-package com.example.photorg.ui.theme
+package com.example.photorg
 
 import androidx.compose.ui.graphics.Color
 
