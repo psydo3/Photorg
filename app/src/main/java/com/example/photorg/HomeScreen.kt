@@ -2,6 +2,7 @@ package com.example.photorg
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -38,16 +40,20 @@ import androidx.navigation.NavController
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.background))
+    ) {
         TopBar()
         Spacer(modifier = Modifier.height(16.dp))
         AlbumSection(
             navController = navController,
             albums = listOf(
-                Album("Singapore", colorResource(R.color.dark_green)),
-                Album("Japan", colorResource(R.color.red)),
-                Album("Thailand", colorResource(R.color.teal_200)),
-                Album("South Korea", colorResource(R.color.teal_200)),
+                Album("Singapore", colorResource(R.color.teal_700)),
+                Album("Japan", colorResource(R.color.purple_700)),
+                Album("Thailand", colorResource(R.color.purple_500)),
+                Album("South Korea", colorResource(R.color.dark_green)),
                 Album("Barcelona", colorResource(R.color.purple_700)),
             )
         )
@@ -55,7 +61,8 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(
+) {
     val openDialog = remember { mutableStateOf(false) }
 
     Row (
@@ -63,13 +70,14 @@ fun TopBar() {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
+            .background(colorResource(id = R.color.topbar_background))
             .padding(14.dp)
             .padding(end = 12.dp)
     ){
         Text(
             text = "Photorg",
             fontWeight = FontWeight.Bold,
-            fontSize = 24.sp
+            fontSize = 26.sp
         )
 
         Image(
@@ -78,10 +86,12 @@ fun TopBar() {
             modifier = Modifier
                 .size(40.dp)
                 .clickable(
-                    onClick = {openDialog.value = true}
+                    onClick = { openDialog.value = true }
                 )
         )
     }
+
+    Divider(thickness = 2.5.dp, color = Color.Black)
 
     if (openDialog.value) {
         NewAlbumDialog(
@@ -90,7 +100,6 @@ fun TopBar() {
                         },
             onConfirm = { name, color ->
                 openDialog.value = false
-                Log.d("NewAlbumDialog", "Album name: $name, Color: $color")
             }
         )
     }
@@ -103,7 +112,7 @@ fun AlbumSection(
     albums: List<Album>,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
+        columns = GridCells.Fixed(3),
         modifier = Modifier
             .scale(0.99f)
             .padding(end = 6.dp),
@@ -124,9 +133,11 @@ fun AlbumItem(
     albumName: String = "Unnamed Album",
     albumColor: Color = colorResource(R.color.pink),
 ) {
+    val openDialog = remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
-            .size(130.dp),
+            .size(145.dp),
     ) {
         Image(
             painter = painterResource(id = R.drawable.album_icon),
@@ -167,9 +178,22 @@ fun AlbumItem(
             modifier = Modifier
                 .width(78.dp)
                 .align(Alignment.BottomCenter)
-                .clickable {
-
-                }
+                .clickable(
+                    onClick = { openDialog.value = true }
+                )
         )
+
+        if (openDialog.value) {
+            NewAlbumDialog(
+                namePassed = albumName,
+                colorPassed = albumColor,
+                onDismiss = {
+                    openDialog.value = false
+                },
+                onConfirm = { name, color ->
+                    openDialog.value = false
+                }
+            )
+        }
     }
 }

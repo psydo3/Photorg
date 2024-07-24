@@ -18,10 +18,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
@@ -41,9 +39,11 @@ fun NewAlbumDialog(
     onConfirm: (
         albumName: String,
         albumColor: Color,
-            ) -> Unit
+            ) -> Unit,
+    namePassed: String = "",
+    colorPassed: Color = colorResource(id = R.color.purple_500),
 ) {
-    var albumText by remember { mutableStateOf("") }
+    var albumText by remember { mutableStateOf(namePassed) }
     var selectedColor by remember { mutableStateOf(0) }
 
     val colorResources = mapOf(
@@ -53,12 +53,20 @@ fun NewAlbumDialog(
         3 to colorResource(id = R.color.teal_700),
     )
 
+    if (namePassed.isNotEmpty()) {
+        for (color in colorResources.entries) {
+            if (color.value == colorPassed) {
+                selectedColor = color.key
+            }
+        }
+    }
+
     AlertDialog(
         onDismissRequest = {
             onDismiss()
         },
         title = {
-            Text(text = "Create a new album")
+            Text(if (albumText.isEmpty()) "Create new album" else "Edit album")
         },
         text = {
             Column(
@@ -98,9 +106,7 @@ fun NewAlbumDialog(
                                 )
                                 .padding(5.dp)
                                 .clip(RoundedCornerShape(200.dp))
-
                                 .background(color.value)
-
                                 .clickable {
                                     selectedColor = color.key
                                 }
@@ -119,16 +125,27 @@ fun NewAlbumDialog(
             Button(
                 onClick = {
                     onConfirm("Test", colorResources[selectedColor]!!)
-                }
+                },
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.button_color)
+                )
             ) {
-                Text("Create")
+                Text(
+                    if (albumText.isEmpty()) "Create" else "Save"
+                )
             }
         },
         dismissButton = {
             Button(
                 onClick = {
                     onDismiss()
-                }) {
+                },
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.button_color)
+                )
+                ) {
                 Text("Cancel")
             }
         }
