@@ -27,7 +27,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
@@ -65,6 +67,8 @@ fun TopBar(
 ) {
     val openDialog = remember { mutableStateOf(false) }
 
+    Divider(thickness = 2.5.dp, color = Color.Black)
+
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -73,6 +77,7 @@ fun TopBar(
             .background(colorResource(id = R.color.topbar_background))
             .padding(14.dp)
             .padding(end = 12.dp)
+
     ){
         Text(
             text = "Photorg",
