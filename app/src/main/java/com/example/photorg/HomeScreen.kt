@@ -1,9 +1,11 @@
 package com.example.photorg
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -129,6 +131,7 @@ fun AlbumSection(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlbumItem(
     navController: NavController,
@@ -164,9 +167,14 @@ fun AlbumItem(
                 .align(Alignment.Center)
                 .padding(bottom = 16.dp)
                 .padding(top = 10.dp)
-                .clickable {
-                    navController.navigate(Routes.albumScreen+"/$albumName/$colorValue")
-                },
+                .combinedClickable(
+                    onClick = {
+                        navController.navigate(Routes.albumScreen+"/$albumName/$colorValue")
+                    },
+                    onLongClick = {
+                        openDialog.value = true
+                    }
+                ),
             colorFilter = ColorFilter.tint(albumColor),
         )
         Image(
