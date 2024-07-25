@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -126,12 +125,11 @@ fun CameraSection(
         Divider(thickness = 1.5.dp, color = Color.Black, modifier = Modifier.padding(bottom = 12.dp))
 
         Button(
-            modifier = Modifier
-                .size(100.dp),
-
             onClick = {
                 cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
             },
+            modifier = Modifier
+                .size(100.dp),
             elevation =  ButtonDefaults.buttonElevation(
                 defaultElevation = 10.dp,
                 pressedElevation = 15.dp,

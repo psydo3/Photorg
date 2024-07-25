@@ -67,7 +67,6 @@ fun PermissionDialog(
     )
 }
 
-//The returned text differs depending on if the user has denied it one or more times
 interface PermissionTextProvider {
     fun getDescription(isPermanentlyDeclined: Boolean): String
 }
@@ -75,35 +74,11 @@ interface PermissionTextProvider {
 class CameraPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if(isPermanentlyDeclined) {
-            "It seems you permanently declined camera permission. " +
+            "It seems you permanently declined camera permissions. " +
                     "You can go to the app settings to grant it."
         } else {
-            "This app needs access to your camera so that your friends " +
-                    "can see you in a call."
-        }
-    }
-}
-
-class RecordAudioPermissionTextProvider: PermissionTextProvider {
-    override fun getDescription(isPermanentlyDeclined: Boolean): String {
-        return if(isPermanentlyDeclined) {
-            "It seems you permanently declined microphone permission. " +
-                    "You can go to the app settings to grant it."
-        } else {
-            "This app needs access to your microphone so that your friends " +
-                    "can hear you in a call."
-        }
-    }
-}
-
-class PhoneCallPermissionTextProvider: PermissionTextProvider {
-    override fun getDescription(isPermanentlyDeclined: Boolean): String {
-        return if(isPermanentlyDeclined) {
-            "It seems you permanently declined phone calling permission. " +
-                    "You can go to the app settings to grant it."
-        } else {
-            "This app needs phone calling permission so that you can talk " +
-                    "to your friends."
+            "This app needs access to your camera so that you can " +
+                    "take and save pictures."
         }
     }
 }
