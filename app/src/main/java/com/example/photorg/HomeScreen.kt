@@ -67,7 +67,7 @@ fun TopBar(
 ) {
     val openDialog = remember { mutableStateOf(false) }
 
-    Divider(thickness = 2.5.dp, color = Color.Black)
+    Divider(thickness = 1.5.dp, color = Color.Black)
 
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -96,7 +96,7 @@ fun TopBar(
         )
     }
 
-    Divider(thickness = 2.5.dp, color = Color.Black)
+    Divider(thickness = 1.5.dp, color = Color.Black)
 
     if (openDialog.value) {
         NewAlbumDialog(
@@ -108,7 +108,6 @@ fun TopBar(
             }
         )
     }
-
 }
 
 @Composable
@@ -142,7 +141,7 @@ fun AlbumItem(
 
     Box(
         modifier = Modifier
-            .size(145.dp),
+            .size(155.dp),
     ) {
         Image(
             painter = painterResource(id = R.drawable.album_icon),
