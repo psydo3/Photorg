@@ -1,6 +1,5 @@
 package com.example.photorg
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,16 +40,16 @@ fun NewAlbumDialog(
         albumColor: Color,
             ) -> Unit,
     namePassed: String = "",
-    colorPassed: Color = colorResource(id = R.color.purple_500),
+    colorPassed: Color = colorResource(id = R.color.color_option2),
 ) {
     var albumText by remember { mutableStateOf(namePassed) }
     var selectedColor by remember { mutableStateOf(0) }
 
     val colorResources = mapOf(
-        0 to colorResource(id = R.color.purple_500),
-        1 to colorResource(id = R.color.purple_700),
-        2 to colorResource(id = R.color.dark_green),
-        3 to colorResource(id = R.color.teal_700),
+        0 to colorResource(id = R.color.color_option2),
+        1 to colorResource(id = R.color.color_option4),
+        2 to colorResource(id = R.color.color_option3),
+        3 to colorResource(id = R.color.color_option1),
     )
 
     if (namePassed.isNotEmpty()) {
