@@ -136,6 +136,7 @@ fun AlbumItem(
     albumColor: Color = colorResource(R.color.color_option2),
 ) {
     var colorValue = 0
+
     val colorResources = mapOf(
         0 to colorResource(id = R.color.color_option2),
         1 to colorResource(id = R.color.color_option4),
@@ -147,7 +148,6 @@ fun AlbumItem(
             colorValue = color.key
         }
     }
-
 
     val openDialog = remember { mutableStateOf(false) }
 

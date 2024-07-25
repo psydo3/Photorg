@@ -123,7 +123,7 @@ fun NewAlbumDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onConfirm("Test", colorResources[selectedColor]!!)
+                    onConfirm(albumText, colorResources[selectedColor]!!)
                 },
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(
