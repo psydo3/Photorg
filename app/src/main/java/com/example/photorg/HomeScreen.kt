@@ -41,7 +41,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navController: NavController,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,11 +54,11 @@ fun HomeScreen(navController: NavController) {
         AlbumSection(
             navController = navController,
             albums = listOf(
-                Album("Singapore", colorResource(R.color.color_option1)),
-                Album("Japan", colorResource(R.color.color_option4)),
-                Album("Thailand", colorResource(R.color.color_option2)),
-                Album("South Korea", colorResource(R.color.color_option3)),
-                Album("Barcelona", colorResource(R.color.color_option4)),
+                Album("Singapore", 3),
+                Album("Japan", 1),
+                Album("Thailand", 0),
+                Album("South Korea", 2),
+                Album("Barcelona", 1),
             )
         )
     }
@@ -136,21 +138,14 @@ fun AlbumSection(
 fun AlbumItem(
     navController: NavController,
     albumName: String = "Unnamed Album",
-    albumColor: Color = colorResource(R.color.color_option2),
+    albumColor: Int = 0,
 ) {
-    var colorValue = 0
-
     val colorResources = mapOf(
         0 to colorResource(id = R.color.color_option2),
         1 to colorResource(id = R.color.color_option4),
         2 to colorResource(id = R.color.color_option3),
         3 to colorResource(id = R.color.color_option1),
     )
-    for (color in colorResources) {
-        if (albumColor == color.value) {
-            colorValue = color.key
-        }
-    }
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -169,13 +164,13 @@ fun AlbumItem(
                 .padding(top = 10.dp)
                 .combinedClickable(
                     onClick = {
-                        navController.navigate(Routes.albumScreen+"/$albumName/$colorValue")
+                        navController.navigate(Routes.albumScreen+"/$albumName/$albumColor")
                     },
                     onLongClick = {
                         openDialog.value = true
                     }
                 ),
-            colorFilter = ColorFilter.tint(albumColor),
+            colorFilter = ColorFilter.tint(colorResources.entries.elementAt(albumColor).value),
         )
         Image(
             painter = painterResource(id = R.drawable.close),
@@ -211,7 +206,7 @@ fun AlbumItem(
         if (openDialog.value) {
             NewAlbumDialog(
                 namePassed = albumName,
-                colorPassed = albumColor,
+                colorPassed = colorResources.entries.elementAt(albumColor).value,
                 onDismiss = {
                     openDialog.value = false
                 },
