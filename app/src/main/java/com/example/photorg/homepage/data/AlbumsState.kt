@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.homepage.data
 
 data class AlbumsState(
     val albums: List<Album> = emptyList(),

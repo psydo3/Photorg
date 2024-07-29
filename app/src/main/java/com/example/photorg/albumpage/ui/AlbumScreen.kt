@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.albumpage.ui
 
 import android.Manifest
 import android.app.Activity
@@ -37,6 +37,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.photorg.homepage.data.AlbumEvent
+import com.example.photorg.homepage.data.AlbumsState
+import com.example.photorg.R
+import com.example.photorg.albumpage.data.PermissionDialogViewModel
 
 @Composable
 fun AlbumScreen(

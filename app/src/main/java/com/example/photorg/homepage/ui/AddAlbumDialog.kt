@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.homepage.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,6 +31,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import com.example.photorg.R
+import com.example.photorg.homepage.data.AlbumEvent
+import com.example.photorg.homepage.data.AlbumsState
 
 @Composable
 fun AddAlbumDialog(

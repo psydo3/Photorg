@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.homepage.data
 
 sealed interface AlbumEvent {
     object SaveAlbum: AlbumEvent

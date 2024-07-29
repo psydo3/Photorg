@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.homepage.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

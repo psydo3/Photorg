@@ -1,8 +1,7 @@
-package com.example.photorg
+package com.example.photorg.homepage.data
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import org.jetbrains.annotations.ApiStatus.Internal
 
 @Dao
 interface AlbumDao {

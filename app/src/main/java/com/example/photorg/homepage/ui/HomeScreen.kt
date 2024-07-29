@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.homepage.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -35,9 +35,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.photorg.R
+import com.example.photorg.homepage.data.AlbumEvent
+import com.example.photorg.homepage.data.AlbumsState
+import com.example.photorg.navigation.Routes
 
 @Composable
-fun NewHomeScreen(
+fun HomeScreen(
     navController: NavController,
     state: AlbumsState,
     onEvent: (AlbumEvent) -> Unit
@@ -47,12 +51,12 @@ fun NewHomeScreen(
             .fillMaxSize()
             .background(color = colorResource(id = R.color.background))
     ){
-        NewTopBar(
+        TopBar(
             state = state,
             onEvent = onEvent
         )
         Spacer(modifier = Modifier.height(16.dp))
-        NewAlbumSection(
+        AlbumSection(
             navController = navController,
             state = state,
             onEvent = onEvent
@@ -68,7 +72,7 @@ fun NewHomeScreen(
 }
 
 @Composable
-fun NewTopBar(
+fun TopBar(
     state: AlbumsState,
     onEvent: (AlbumEvent) -> Unit
 ) {
@@ -105,7 +109,7 @@ fun NewTopBar(
 }
 
 @Composable
-fun NewAlbumSection(
+fun AlbumSection(
     state: AlbumsState,
     onEvent: (AlbumEvent) -> Unit,
     navController: NavController
@@ -117,7 +121,7 @@ fun NewAlbumSection(
             .padding(end = 6.dp),
     ){
         items(state.albums.size){
-            NewAlbumItem(
+            AlbumItem(
                 navController = navController,
                 albumName = state.albums[it].albumName,
                 albumColor = state.albums[it].albumColor,
@@ -131,7 +135,7 @@ fun NewAlbumSection(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NewAlbumItem(
+fun AlbumItem(
     navController: NavController,
     albumName: String = "Unnamed Album",
     albumColor: Int = 0,

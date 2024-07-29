@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -7,13 +7,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
+import com.example.photorg.homepage.data.AlbumDatabase
+import com.example.photorg.albumpage.ui.AlbumScreen
+import com.example.photorg.homepage.data.AlbumViewModel
+import com.example.photorg.homepage.ui.HomeScreen
 
 @Composable
 fun Navigation(){
@@ -43,9 +46,9 @@ fun Navigation(){
     )
     val state by viewModel.state.collectAsState()
 
-    NavHost(navController = navController, startDestination = Routes.newHomeScreen){
-        composable(Routes.newHomeScreen){
-            NewHomeScreen(
+    NavHost(navController = navController, startDestination = Routes.homeScreen){
+        composable(Routes.homeScreen){
+            HomeScreen(
                 navController = navController,
                 state = state,
                 onEvent = viewModel::onEvent
