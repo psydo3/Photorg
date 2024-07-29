@@ -25,7 +25,9 @@ fun Navigation(){
             context,
             AlbumDatabase::class.java,
             "albums.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     val viewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory{
@@ -41,9 +43,9 @@ fun Navigation(){
     )
     val state by viewModel.state.collectAsState()
 
-    NavHost(navController = navController, startDestination = Routes.homeScreen){
-        composable(Routes.homeScreen){
-            HomeScreen(
+    NavHost(navController = navController, startDestination = Routes.newHomeScreen){
+        composable(Routes.newHomeScreen){
+            NewHomeScreen(
                 navController = navController,
                 state = state,
                 onEvent = viewModel::onEvent

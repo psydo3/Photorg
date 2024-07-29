@@ -9,5 +9,5 @@ data class Album(
     val albumName: String,
     val albumColor: Int,
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = 0,
+    val id: Int = 0,
 )

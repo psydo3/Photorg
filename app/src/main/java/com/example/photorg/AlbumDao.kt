@@ -2,6 +2,7 @@ package com.example.photorg
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import org.jetbrains.annotations.ApiStatus.Internal
 
 @Dao
 interface AlbumDao {

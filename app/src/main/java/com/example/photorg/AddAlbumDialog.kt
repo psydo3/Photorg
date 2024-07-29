@@ -33,17 +33,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NewAlbumDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (
-        albumName: String,
-        albumColor: Color,
-            ) -> Unit,
-    namePassed: String = "",
-    colorPassed: Color = colorResource(id = R.color.color_option2),
+fun AddAlbumDialog(
+    modifier: Modifier = Modifier,
+    state: AlbumsState,
+    onEvent: (AlbumEvent) -> Unit,
 ) {
-    var albumText by remember { mutableStateOf(namePassed) }
     var selectedColor by remember { mutableStateOf(0) }
+    var albumText by remember { mutableStateOf(state.albumName) }
 
     val colorResources = mapOf(
         0 to colorResource(id = R.color.color_option2),
@@ -52,20 +48,28 @@ fun NewAlbumDialog(
         3 to colorResource(id = R.color.color_option1),
     )
 
-    if (namePassed.isNotEmpty()) {
-        for (color in colorResources.entries) {
-            if (color.value == colorPassed) {
-                selectedColor = color.key
-            }
-        }
-    }
-
     AlertDialog(
         onDismissRequest = {
-            onDismiss()
+            onEvent(AlbumEvent.HideDialog)
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onEvent(AlbumEvent.SetName(albumText))
+                    onEvent(AlbumEvent.SaveAlbum)
+                },
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.button_color)
+                )
+            ) {
+                Text(
+                    if (state.albumName.isEmpty()) "Create" else "Save"
+                )
+            }
         },
         title = {
-            Text(if (albumText.isEmpty()) "Create new album" else "Edit album")
+            Text(if (state.albumName.isEmpty()) "Create new album" else "Edit album")
         },
         text = {
             Column(
@@ -108,6 +112,7 @@ fun NewAlbumDialog(
                                 .background(color.value)
                                 .clickable {
                                     selectedColor = color.key
+                                    onEvent(AlbumEvent.SetColor(color.key))
                                 }
 
                         ){
@@ -116,35 +121,17 @@ fun NewAlbumDialog(
                     }
                 }
             }
-
-
         },
-
-        confirmButton = {
+        dismissButton = {
             Button(
                 onClick = {
-                    onConfirm(albumText, colorResources[selectedColor]!!)
+                    onEvent(AlbumEvent.HideDialog)
                 },
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.button_color)
                 )
             ) {
-                Text(
-                    if (albumText.isEmpty()) "Create" else "Save"
-                )
-            }
-        },
-        dismissButton = {
-            Button(
-                onClick = {
-                    onDismiss()
-                },
-                shape = RoundedCornerShape(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button_color)
-                )
-                ) {
                 Text("Cancel")
             }
         }

@@ -23,15 +23,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(
+fun NewHomeScreen(
     navController: NavController,
     state: AlbumsState,
     onEvent: (AlbumEvent) -> Unit
@@ -50,27 +46,32 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.background))
-    ) {
-        TopBar()
-        Spacer(modifier = Modifier.height(16.dp))
-        AlbumSection(
-            navController = navController,
-            albums = listOf(
-                Album("Singapore", 3),
-                Album("Japan", 1),
-                Album("Thailand", 0),
-                Album("South Korea", 2),
-                Album("Barcelona", 1),
-            )
+    ){
+        NewTopBar(
+            state = state,
+            onEvent = onEvent
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        NewAlbumSection(
+            navController = navController,
+            state = state,
+            onEvent = onEvent
+        )
+
+        if (state.isAddingAlbum) {
+            AddAlbumDialog(
+                state = state,
+                onEvent = onEvent
+            )
+        }
     }
 }
 
 @Composable
-fun TopBar(
+fun NewTopBar(
+    state: AlbumsState,
+    onEvent: (AlbumEvent) -> Unit
 ) {
-    val openDialog = remember { mutableStateOf(false) }
-
     Divider(thickness = 1.5.dp, color = Color.Black)
 
     Row (
@@ -94,30 +95,20 @@ fun TopBar(
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
-                .clickable(
-                    onClick = { openDialog.value = true }
-                )
+                .clickable {
+                    onEvent(AlbumEvent.ShowDialog)
+                }
         )
     }
 
     Divider(thickness = 1.5.dp, color = Color.Black)
-
-    if (openDialog.value) {
-        NewAlbumDialog(
-            onDismiss = {
-                openDialog.value = false
-                        },
-            onConfirm = { name, color ->
-                openDialog.value = false
-            }
-        )
-    }
 }
 
 @Composable
-fun AlbumSection(
-    navController: NavController,
-    albums: List<Album>,
+fun NewAlbumSection(
+    state: AlbumsState,
+    onEvent: (AlbumEvent) -> Unit,
+    navController: NavController
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -125,11 +116,14 @@ fun AlbumSection(
             .scale(0.99f)
             .padding(end = 6.dp),
     ){
-        items(albums.size){
-            AlbumItem(
+        items(state.albums.size){
+            NewAlbumItem(
                 navController = navController,
-                albumName = albums[it].albumName,
-                albumColor = albums[it].albumColor
+                albumName = state.albums[it].albumName,
+                albumColor = state.albums[it].albumColor,
+                onEvent = onEvent,
+                state = state,
+                albumIndex = it
             )
         }
     }
@@ -137,10 +131,13 @@ fun AlbumSection(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AlbumItem(
+fun NewAlbumItem(
     navController: NavController,
     albumName: String = "Unnamed Album",
     albumColor: Int = 0,
+    onEvent: (AlbumEvent) -> Unit,
+    state: AlbumsState,
+    albumIndex: Int
 ) {
     val colorResources = mapOf(
         0 to colorResource(id = R.color.color_option2),
@@ -148,8 +145,6 @@ fun AlbumItem(
         2 to colorResource(id = R.color.color_option3),
         3 to colorResource(id = R.color.color_option1),
     )
-
-    val openDialog = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -169,7 +164,7 @@ fun AlbumItem(
                         navController.navigate(Routes.albumScreen+"/$albumName/$albumColor")
                     },
                     onLongClick = {
-                        openDialog.value = true
+
                     }
                 ),
             colorFilter = ColorFilter.tint(colorResources.entries.elementAt(albumColor).value),
@@ -187,7 +182,7 @@ fun AlbumItem(
                     shape = CircleShape
                 )
                 .clickable {
-
+                    onEvent(AlbumEvent.DeleteAlbum(state.albums[albumIndex]))
                 }
         )
         Text(
@@ -200,22 +195,9 @@ fun AlbumItem(
             modifier = Modifier
                 .width(78.dp)
                 .align(Alignment.BottomCenter)
-                .clickable(
-                    onClick = { openDialog.value = true }
-                )
-        )
+                .clickable{
 
-        if (openDialog.value) {
-            NewAlbumDialog(
-                namePassed = albumName,
-                colorPassed = colorResources.entries.elementAt(albumColor).value,
-                onDismiss = {
-                    openDialog.value = false
-                },
-                onConfirm = { name, color ->
-                    openDialog.value = false
                 }
-            )
-        }
+        )
     }
 }
