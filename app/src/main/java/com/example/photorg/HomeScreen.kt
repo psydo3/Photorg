@@ -43,6 +43,8 @@ import androidx.navigation.NavController
 @Composable
 fun HomeScreen(
     navController: NavController,
+    state: AlbumsState,
+    onEvent: (AlbumEvent) -> Unit
 ) {
     Column(
         modifier = Modifier

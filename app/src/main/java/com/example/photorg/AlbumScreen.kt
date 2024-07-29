@@ -39,7 +39,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 @Composable
-fun AlbumScreen(navController: NavController, albumName: String?, colorVal: Int?) {
+fun AlbumScreen(
+    navController: NavController,
+    albumName: String?, colorVal: Int?,
+    state: AlbumsState,
+    onEvent: (AlbumEvent) -> Unit
+) {
     Log.d("c", colorVal.toString())
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
