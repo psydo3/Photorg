@@ -14,8 +14,7 @@ import kotlinx.coroutines.launch
 class AlbumViewModel (
     private val dao: AlbumDao
 ): ViewModel(){
-    private val _state = MutableStateFlow(AlbumsState())
-    private val _sortType = MutableStateFlow(SortType.NAME)
+    private val _sortType = MutableStateFlow(SortType.COLOR)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _albums = _sortType
@@ -27,6 +26,7 @@ class AlbumViewModel (
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
+    private val _state = MutableStateFlow(AlbumsState())
     val state = combine(_state, _sortType, _albums){ state, sortType, albums ->
         state.copy(
             albums = albums,
