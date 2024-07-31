@@ -111,16 +111,24 @@ fun NameAndDateBar(albumName: String?, colorVal: Int?) {
 @Composable
 fun CameraSection(
 ) {
+    val permissionsToRequest = arrayOf(
+        Manifest.permission.CAMERA
+    )
+
     val viewModel = viewModel<PermissionDialogViewModel>()
     val dialogQueue = viewModel.visiblePermissionDialogQueue
 
-    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            viewModel.onPermissionResult(
-                permission = Manifest.permission.CAMERA,
-                isGranted = isGranted
-            )
+    val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { perms ->
+            permissionsToRequest.forEach { permission ->
+                viewModel.onPermissionResult(
+                    permission = permission,
+                    if(perms.keys.contains(permission)){
+                        perms[permission] == true
+                    } else true
+                )
+            }
         }
     )
 
@@ -135,7 +143,7 @@ fun CameraSection(
 
         Button(
             onClick = {
-                cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
+                multiplePermissionResultLauncher.launch(permissionsToRequest)
             },
             modifier = Modifier
                 .size(100.dp),
@@ -166,7 +174,6 @@ fun CameraSection(
 
         .forEach { permission ->
             PermissionDialog(
-
                 permissionTextProvider = when (permission) {
                     Manifest.permission.CAMERA -> {
                         CameraPermissionTextProvider()
@@ -181,7 +188,7 @@ fun CameraSection(
                 onDismiss = viewModel::dismissDialog,
                 onOkClick = {
                     viewModel.dismissDialog()
-                    cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
+                    multiplePermissionResultLauncher.launch(permissionsToRequest)
                 },
                 onGoToAppSettingsClick = { openAppSettings(context = context) },
             )
