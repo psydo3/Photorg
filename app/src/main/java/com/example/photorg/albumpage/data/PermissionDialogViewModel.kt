@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.albumpage.data
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel

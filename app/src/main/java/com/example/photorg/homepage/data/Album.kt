@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.homepage.data
 
 import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
@@ -9,5 +9,5 @@ data class Album(
     val albumName: String,
     val albumColor: Int,
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = 0,
+    val id: Int = 0,
 )

@@ -1,4 +1,4 @@
-package com.example.photorg
+package com.example.photorg.navigation
 
 object Routes {
     var homeScreen = "homeScreen"
