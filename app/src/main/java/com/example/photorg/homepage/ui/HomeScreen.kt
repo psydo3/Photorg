@@ -21,8 +21,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -38,6 +43,7 @@ import androidx.navigation.NavController
 import com.example.photorg.R
 import com.example.photorg.homepage.data.AlbumEvent
 import com.example.photorg.homepage.data.AlbumsState
+import com.example.photorg.homepage.data.SortType
 import com.example.photorg.navigation.Routes
 
 @Composable
@@ -85,7 +91,6 @@ fun TopBar(
             .fillMaxWidth()
             .background(colorResource(id = R.color.topbar_background))
             .padding(14.dp)
-            .padding(end = 12.dp)
 
     ){
         Text(
@@ -94,15 +99,31 @@ fun TopBar(
             fontSize = 26.sp
         )
 
-        Image(
-            painter = painterResource(R.drawable.create_album),
-            contentDescription = null,
+        Row (
+            horizontalArrangement = Arrangement.End,
             modifier = Modifier
-                .size(40.dp)
-                .clickable {
-                    onEvent(AlbumEvent.ShowDialog)
-                }
-        )
+                .fillMaxWidth()
+        ){
+            Image(
+                painter = painterResource(R.drawable.sort),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 20.dp)
+                    .size(40.dp)
+                    .clickable {
+                        onEvent(AlbumEvent.SortAlbums(SortType.COLOR))
+                    }
+            )
+            Image(
+                painter = painterResource(R.drawable.create_album),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable {
+                        onEvent(AlbumEvent.ShowDialog)
+                    }
+            )
+        }
     }
 
     Divider(thickness = 1.5.dp, color = Color.Black)
@@ -165,7 +186,7 @@ fun AlbumItem(
                 .padding(top = 10.dp)
                 .combinedClickable(
                     onClick = {
-                        navController.navigate(Routes.albumScreen+"/$albumName/$albumColor")
+                        navController.navigate(Routes.albumScreen + "/$albumName/$albumColor")
                     },
                     onLongClick = {
 
@@ -199,7 +220,7 @@ fun AlbumItem(
             modifier = Modifier
                 .width(78.dp)
                 .align(Alignment.BottomCenter)
-                .clickable{
+                .clickable {
 
                 }
         )
