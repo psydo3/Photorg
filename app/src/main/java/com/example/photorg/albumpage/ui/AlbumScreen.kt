@@ -73,13 +73,9 @@ fun AlbumScreen(
     ) {
         NameAndDateBar(albumName, colorVal)
 
-        ImageSection(
-            albumName.toString()
-        )
+        ImageSection(albumName.toString())
 
-        CameraSection(
-            albumName.toString()
-        )
+        CameraSection(albumName.toString())
     }
 }
 
@@ -137,8 +133,14 @@ fun ImageSection(
     val file = File(LocalContext.current.filesDir, "")
 
     val files by remember {
-        mutableStateOf(file.listFiles()?.filter { it.name.endsWith(".jpg") }!!)
+        mutableStateOf(file.listFiles()?.filter {
+            it.name.endsWith(".jpg")
+                    && it.name.startsWith(albumName + "_")
+        }!!
+        )
     }
+
+    pictureCount = files.size
 
     LazyColumn(
         modifier = Modifier
@@ -202,7 +204,7 @@ fun CameraSection(
                     val inputStream = context.contentResolver.openInputStream(uri).use {
                         it?.readBytes()
                     }
-                    FileOutputStream(file.toString() + pictureCount++ + "_" + albumName + ".jpg").use {
+                    FileOutputStream(file.toString() + "_" + pictureCount++ + albumName + ".jpg").use {
                         it.write(inputStream)
                     }
                     Log.d("uri", file.toString())
@@ -222,42 +224,75 @@ fun CameraSection(
     ){
         Divider(thickness = 1.5.dp, color = Color.Black, modifier = Modifier.padding(bottom = 12.dp))
 
-        Button(
-            onClick = {
-                multiplePermissionResultLauncher.launch(permissionsToRequest)
-
-                if (
-                    (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_GRANTED) &&
-                    (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
-                            == PackageManager.PERMISSION_GRANTED))
-                {
-                    multiplePhotoPickerLauncher.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
-                        )
-                    )
-                }
-            },
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
-                .size(100.dp),
-            elevation =  ButtonDefaults.buttonElevation(
-                defaultElevation = 10.dp,
-                pressedElevation = 15.dp,
-                disabledElevation = 0.dp
-            ),
-            border = BorderStroke(1.dp, Color.Black),
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp)
+        ){
+            Button(
+                onClick = {
 
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White
-            ),
-            shape = CircleShape,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.camera_icon),
-                contentDescription = null,
-            )
+                },
+                modifier = Modifier
+                    .size(100.dp),
+                elevation =  ButtonDefaults.buttonElevation(
+                    defaultElevation = 10.dp,
+                    pressedElevation = 15.dp,
+                    disabledElevation = 0.dp
+                ),
+                border = BorderStroke(1.dp, Color.Black),
+
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White
+                ),
+                shape = CircleShape,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.camera_icon),
+                    contentDescription = null,
+                )
+            }
+
+            Button(
+                onClick = {
+                    multiplePermissionResultLauncher.launch(permissionsToRequest)
+
+                    if (
+                        (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
+                                == PackageManager.PERMISSION_GRANTED)
+                        )
+                    {
+                        multiplePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .size(100.dp),
+                elevation =  ButtonDefaults.buttonElevation(
+                    defaultElevation = 10.dp,
+                    pressedElevation = 15.dp,
+                    disabledElevation = 0.dp
+                ),
+                border = BorderStroke(1.dp, Color.Black),
+
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White
+                ),
+                shape = CircleShape,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.upload),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(6.dp)
+                )
+            }
         }
+
 
         Divider(thickness = 1.5.dp, color = Color.Black, modifier = Modifier.padding(top = 12.dp))
     }
