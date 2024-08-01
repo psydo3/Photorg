@@ -232,7 +232,7 @@ fun CameraSection(
         ){
             Button(
                 onClick = {
-
+                    multiplePermissionResultLauncher.launch(permissionsToRequest)
                 },
                 modifier = Modifier
                     .size(100.dp),
@@ -257,6 +257,14 @@ fun CameraSection(
             Button(
                 onClick = {
                     multiplePermissionResultLauncher.launch(permissionsToRequest)
+                    if (
+                        (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
+                                == PackageManager.PERMISSION_GRANTED) &&
+                        (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                                == PackageManager.PERMISSION_GRANTED)
+                    ){
+                        Log.d("perm", "both granted")
+                    }
 
                     if (
                         (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
