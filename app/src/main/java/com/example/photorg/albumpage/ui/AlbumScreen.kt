@@ -10,6 +10,7 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -18,10 +19,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,10 +48,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.photorg.homepage.data.AlbumEvent
 import com.example.photorg.homepage.data.AlbumsState
 import com.example.photorg.R
 import com.example.photorg.albumpage.data.PermissionDialogViewModel
+import java.io.File
+import java.io.FileOutputStream
+
+public var pictureCount = 0
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -64,9 +72,15 @@ fun AlbumScreen(
             .fillMaxSize(),
     ) {
         NameAndDateBar(albumName, colorVal)
-        CameraSection()
-    }
 
+        ImageSection(
+            albumName.toString()
+        )
+
+        CameraSection(
+            albumName.toString()
+        )
+    }
 }
 
 @Composable
@@ -116,9 +130,39 @@ fun NameAndDateBar(albumName: String?, colorVal: Int?) {
 
 }
 
+@Composable
+fun ImageSection(
+    albumName: String,
+) {
+    val file = File(LocalContext.current.filesDir, "")
+
+    val files by remember {
+        mutableStateOf(file.listFiles()?.filter { it.name.endsWith(".jpg") }!!)
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxHeight(.7f)
+            .padding(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        items(files.size){
+                AsyncImage(
+                    model = files[it],
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .padding(8.dp),
+                )
+        }
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun CameraSection(
+    albumName : String
 ) {
     val context = LocalContext.current
 
@@ -144,6 +188,31 @@ fun CameraSection(
         }
     )
 
+    var selectedImageUris by remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
+
+    val file = File(context.filesDir, albumName)
+
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = { uris ->
+            if (uris.isNotEmpty()){
+                uris.forEach { uri ->
+                    val inputStream = context.contentResolver.openInputStream(uri).use {
+                        it?.readBytes()
+                    }
+                    FileOutputStream(file.toString() + pictureCount++ + "_" + albumName + ".jpg").use {
+                        it.write(inputStream)
+                    }
+                    Log.d("uri", file.toString())
+                }
+
+            }
+            selectedImageUris = uris
+        }
+    )
+
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -163,7 +232,11 @@ fun CameraSection(
                     (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
                             == PackageManager.PERMISSION_GRANTED))
                 {
-                    Log.d("A", "Camera and storage permissions granted")
+                    multiplePhotoPickerLauncher.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
                 }
             },
             modifier = Modifier
