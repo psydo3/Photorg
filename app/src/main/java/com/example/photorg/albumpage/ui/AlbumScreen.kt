@@ -4,11 +4,14 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +28,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -42,6 +50,7 @@ import com.example.photorg.homepage.data.AlbumsState
 import com.example.photorg.R
 import com.example.photorg.albumpage.data.PermissionDialogViewModel
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun AlbumScreen(
     navController: NavController,
@@ -49,7 +58,6 @@ fun AlbumScreen(
     state: AlbumsState,
     onEvent: (AlbumEvent) -> Unit
 ) {
-    Log.d("c", colorVal.toString())
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -108,19 +116,34 @@ fun NameAndDateBar(albumName: String?, colorVal: Int?) {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun CameraSection(
 ) {
+    val context = LocalContext.current
+    var granted by remember {
+        mutableStateOf(false)
+    }
+
+    val permissionsToRequest = arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.READ_MEDIA_IMAGES,
+    )
+
     val viewModel = viewModel<PermissionDialogViewModel>()
     val dialogQueue = viewModel.visiblePermissionDialogQueue
 
-    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            viewModel.onPermissionResult(
-                permission = Manifest.permission.CAMERA,
-                isGranted = isGranted
-            )
+    val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { perms ->
+            permissionsToRequest.forEach { permission ->
+                viewModel.onPermissionResult(
+                    permission = permission,
+                    isGranted = if(perms.keys.contains(permission)){
+                        perms[permission] == true
+                    } else true,
+                )
+            }
         }
     )
 
@@ -135,7 +158,16 @@ fun CameraSection(
 
         Button(
             onClick = {
-                cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
+                multiplePermissionResultLauncher.launch(permissionsToRequest)
+
+                if (
+                    (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED) &&
+                    (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
+                            == PackageManager.PERMISSION_GRANTED))
+                {
+                    Log.d("A", "Camera and storage permissions granted")
+                }
             },
             modifier = Modifier
                 .size(100.dp),
@@ -160,16 +192,17 @@ fun CameraSection(
         Divider(thickness = 1.5.dp, color = Color.Black, modifier = Modifier.padding(top = 12.dp))
     }
 
-    val context = LocalContext.current
     dialogQueue
         .reversed()
 
         .forEach { permission ->
             PermissionDialog(
-
                 permissionTextProvider = when (permission) {
                     Manifest.permission.CAMERA -> {
                         CameraPermissionTextProvider()
+                    }
+                    Manifest.permission.READ_MEDIA_IMAGES -> {
+                       StoragePermissionTextProvider()
                     }
                     else -> {
                         error("Unknown permission")
@@ -181,7 +214,7 @@ fun CameraSection(
                 onDismiss = viewModel::dismissDialog,
                 onOkClick = {
                     viewModel.dismissDialog()
-                    cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
+                    multiplePermissionResultLauncher.launch(permissionsToRequest)
                 },
                 onGoToAppSettingsClick = { openAppSettings(context = context) },
             )
