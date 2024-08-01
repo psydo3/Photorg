@@ -40,9 +40,15 @@ fun AddAlbumDialog(
     modifier: Modifier = Modifier,
     state: AlbumsState,
     onEvent: (AlbumEvent) -> Unit,
+    albumIndex: Int
 ) {
     var selectedColor by remember { mutableStateOf(0) }
-    var albumText by remember { mutableStateOf(state.albumName) }
+    var albumText by remember {
+        mutableStateOf(
+            if (albumIndex == -1) ""
+            else state.albums[albumIndex].albumName
+        )
+    }
 
     val colorResources = mapOf(
         0 to colorResource(id = R.color.color_option2),
@@ -67,12 +73,12 @@ fun AddAlbumDialog(
                 )
             ) {
                 Text(
-                    if (state.albumName.isEmpty()) "Create" else "Save"
+                    if (albumIndex == -1) "Create" else "Save"
                 )
             }
         },
         title = {
-            Text(if (state.albumName.isEmpty()) "Create new album" else "Edit album")
+            Text(if (albumIndex == -1) "Create new album" else "Edit album")
         },
         text = {
             Column(
@@ -80,7 +86,7 @@ fun AddAlbumDialog(
             ){
                 OutlinedTextField(
                     value = albumText,
-                    label = { Text("Album name") },
+                    label = { Text(if (albumIndex == -1) "Album name" else "Edit album name") },
                     onValueChange = {
                         albumText = it
                     },
