@@ -17,7 +17,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -37,6 +39,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,7 +48,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -142,6 +149,10 @@ fun NameAndDateBar(albumName: String?, colorVal: Int?) {
 fun ImageSection(
     albumName: String,
 ) {
+    val deletedIndexes = remember {
+        mutableStateListOf<Int>()
+    }
+
     val file = File(LocalContext.current.filesDir, "")
 
     val files by remember {
@@ -159,28 +170,52 @@ fun ImageSection(
         modifier = Modifier
             .fillMaxHeight(.81f)
             .fillMaxWidth()
-            .padding(4.dp)
-
-        ,
+            .padding(4.dp),
         verticalArrangement = Arrangement.Center,
         horizontalArrangement = Arrangement.Center
     ){
         items(files.size){
-            AsyncImage(
-                model = files[it],
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
-                    .size(250.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .padding(4.dp)
-                    .border(
-                        width = 1.dp,
-                        color = Color.Black,
-                    )
-            )
+                    .background(Color.Black)
+            ){
+                AsyncImage(
+                    model = files[it],
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(250.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                        )
+                        .graphicsLayer {
+                        alpha = if (deletedIndexes.contains(it)) 0.4f else 1f
+                        }
+                        .background(Color.Black)
+                )
 
+                Image(
+                    painter = painterResource(id = R.drawable.close),
+                    contentDescription = null,
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(30.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                            shape = CircleShape
+                        )
+                        .clickable {
+                            files[it].delete()
+                            deletedIndexes.add(it)
+                        }
 
+                )
+            }
         }
     }
 }
