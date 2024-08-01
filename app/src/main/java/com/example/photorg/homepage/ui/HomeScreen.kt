@@ -221,6 +221,7 @@ fun AlbumItem(
                 .width(78.dp)
                 .align(Alignment.BottomCenter)
                 .clickable {
+                    
 
                 }
         )

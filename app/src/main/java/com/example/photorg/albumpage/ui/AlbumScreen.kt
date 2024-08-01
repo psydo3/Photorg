@@ -16,16 +16,21 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -37,7 +42,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -67,15 +75,19 @@ fun AlbumScreen(
     onEvent: (AlbumEvent) -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .fillMaxHeight(),
     ) {
         NameAndDateBar(albumName, colorVal)
-
         ImageSection(albumName.toString())
-
-        CameraSection(albumName.toString())
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier.fillMaxSize()
+        ){
+            CameraSection(albumName.toString())
+        }
     }
 }
 
@@ -142,21 +154,33 @@ fun ImageSection(
 
     pictureCount = files.size
 
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = Modifier
-            .fillMaxHeight(.7f)
-            .padding(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+            .fillMaxHeight(.81f)
+            .fillMaxWidth()
+            .padding(4.dp)
+
+        ,
+        verticalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Center
+    ){
         items(files.size){
-                AsyncImage(
-                    model = files[it],
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(8.dp),
-                )
+            AsyncImage(
+                model = files[it],
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(250.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .padding(4.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.Black,
+                    )
+            )
+
+
         }
     }
 }
@@ -235,7 +259,7 @@ fun CameraSection(
                     multiplePermissionResultLauncher.launch(permissionsToRequest)
                 },
                 modifier = Modifier
-                    .size(100.dp),
+                    .size(90.dp),
                 elevation =  ButtonDefaults.buttonElevation(
                     defaultElevation = 10.dp,
                     pressedElevation = 15.dp,
@@ -279,7 +303,7 @@ fun CameraSection(
                     }
                 },
                 modifier = Modifier
-                    .size(100.dp),
+                    .size(90.dp),
                 elevation =  ButtonDefaults.buttonElevation(
                     defaultElevation = 10.dp,
                     pressedElevation = 15.dp,
