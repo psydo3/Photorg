@@ -93,7 +93,9 @@ fun AlbumScreen(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier.fillMaxSize()
         ){
-            CameraSection(albumName.toString())
+            CameraSection(
+                albumName.toString(),
+            )
         }
     }
 }
@@ -132,7 +134,7 @@ fun NameAndDateBar(albumName: String?, colorVal: Int?) {
                     fontSize = 26.sp
                 )
                 Text(
-                    text = "24 July, 2024",
+                    text = "24 July, 2024 [imp]",
                     fontWeight = FontWeight.W400,
                     fontSize = 12.sp
                 )
@@ -223,7 +225,8 @@ fun ImageSection(
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun CameraSection(
-    albumName : String
+    albumName : String,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
