@@ -225,8 +225,7 @@ fun AlbumItem(
                 .width(78.dp)
                 .align(Alignment.BottomCenter)
                 .clickable {
-                    albumNum = albumIndex
-                    onEvent(AlbumEvent.ShowDialog)
+
                 }
         )
     }
