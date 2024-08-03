@@ -46,6 +46,8 @@ import com.example.photorg.homepage.data.AlbumsState
 import com.example.photorg.homepage.data.SortType
 import com.example.photorg.navigation.Routes
 
+var albumNum = -1
+
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -71,8 +73,10 @@ fun HomeScreen(
         if (state.isAddingAlbum) {
             AddAlbumDialog(
                 state = state,
-                onEvent = onEvent
+                onEvent = onEvent,
+                albumIndex = albumNum
             )
+            albumNum = -1
         }
     }
 }
@@ -221,7 +225,6 @@ fun AlbumItem(
                 .width(78.dp)
                 .align(Alignment.BottomCenter)
                 .clickable {
-                    
 
                 }
         )

@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Album::class],
-    version = 4
+    version = 5
 )
 abstract class AlbumDatabase : RoomDatabase() {
     abstract val dao: AlbumDao
